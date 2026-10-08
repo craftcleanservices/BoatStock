@@ -1,275 +1,857 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BoatStock - Marine Provisioning</title>
+  <title>Boat Stock Provisioning | Craft Clean Services</title>
   <style>
-    :root {
-      --primary: #0a2540;
-      --accent: #00d4ff;
-      --bg: #f8fafc;
-      --text: #1e293b;
-    }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
+      background-color: #0B132B;
       margin: 0;
-      padding: 0;
+      padding: 20px 10px;
+      display: flex;
+      justify-content: center;
     }
-    header {
-      background: var(--primary);
-      color: white;
-      padding: 1.5rem;
-      text-align: center;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-    .store-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1.5rem;
-    }
-    .product-card {
-      background: white;
+    #boat-stock-widget {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #0B132B;
+      color: #ffffff;
+      padding: 20px;
       border-radius: 8px;
-      padding: 1rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      width: 100%;
+      max-width: 1000px;
+      box-sizing: border-box;
+    }
+    #boat-stock-widget h2 {
+      color: #D4AF37;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 0;
+    }
+    #boat-stock-widget p.subtitle {
+      text-align: center;
+      color: #A0A5B5;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+    .bs-section {
+      background: #1A2442;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+    }
+    .bs-form-group {
+      margin-bottom: 15px;
+    }
+    .bs-form-group label {
+      display: block;
+      font-size: 12px;
+      color: #D4AF37;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .bs-form-group input, .bs-form-group textarea, .bs-form-group select {
+      width: 100%;
+      padding: 12px;
+      background: #0B132B;
+      border: 1px solid #A0A5B5;
+      color: #fff;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .bs-form-group textarea {
+      resize: vertical;
+    }
+    .bs-form-group input:focus, .bs-form-group textarea:focus, .bs-form-group select:focus {
+      border-color: #D4AF37;
+      outline: none;
+    }
+    .bs-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    @media (max-width: 600px) {
+      .bs-form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    .bs-tabs {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      scrollbar-width: none;
+    }
+    .bs-tab {
+      background: #1A2442;
+      color: #fff;
+      border: 1px solid #A0A5B5;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-weight: bold;
+    }
+    .bs-tab.active {
+      background: #D4AF37;
+      color: #0B132B;
+      border-color: #D4AF37;
+    }
+    .bs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+    }
+    .bs-card {
+      background: #ffffff;
+      color: #0B132B;
+      border-radius: 6px;
+      padding: 15px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      position: relative;
     }
-    .product-card img {
+    .bs-img {
       width: 100%;
-      height: 150px;
-      object-fit: cover;
+      height: 140px;
+      object-fit: contain; /* Prevents image cutting off */
       border-radius: 4px;
+      margin-bottom: 15px;
+      background-color: #f8f9fa;
+      cursor: pointer;
+      transition: transform 0.2s ease;
     }
-    button {
-      background: var(--primary);
-      color: white;
+    .bs-img:hover {
+      transform: scale(1.03);
+    }
+    .bs-card h4 {
+      margin: 0 0 5px 0;
+      font-size: 15px;
+      line-height: 1.2;
+    }
+    .bs-price {
+      color: #28a745;
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    .bs-card-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+    .bs-btn {
+      background: #D4AF37;
+      color: #0B132B;
       border: none;
-      padding: 0.75rem;
+      padding: 10px;
       border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 12px;
+      transition: 0.2s;
+      width: 100%;
+    }
+    .bs-btn:hover {
+      background: #b5952f;
+    }
+    .bs-qty-inline {
+      display: none;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 4px;
+    }
+    .bs-qty-inline.active {
+      display: flex;
+    }
+    .bs-inline-btn {
+      background: #A0A5B5;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      width: 30px;
+      height: 30px;
       cursor: pointer;
       font-weight: bold;
-      margin-top: 0.5rem;
+      font-size: 16px;
     }
-    button:hover {
-      background: #1e3a8a;
+    .bs-inline-count {
+      font-weight: bold;
+      font-size: 16px;
     }
-    #cart-section {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin-top: 2rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    .bs-cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #333;
+      font-size: 14px;
     }
-    .form-group {
-      margin-bottom: 1rem;
+    .bs-totals {
+      margin-top: 20px;
+      border-top: 2px solid #A0A5B5;
+      padding-top: 15px;
     }
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
+    .bs-total-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
     }
-    input, textarea {
-      width: 100%;
-      padding: 0.5rem;
-      border: 1px solid #cbd5e1;
+    .bs-grand-total {
+      font-size: 18px;
+      font-weight: bold;
+      color: #A0A5B5;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed #A0A5B5;
+    }
+    .bs-deposit-line {
+      font-size: 20px;
+      font-weight: bold;
+      color: #D4AF37;
+      margin-top: 10px;
+    }
+    .bs-checkbox-container {
+      display: flex;
+      align-items: flex-start;
+      margin-top: 20px;
+      background: #0B132B;
+      padding: 15px;
       border-radius: 4px;
+      border: 1px solid #A0A5B5;
+    }
+    .bs-checkbox-container input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin: 2px 15px 0 0;
+      cursor: pointer;
+      accent-color: #D4AF37;
+      flex-shrink: 0;
+    }
+    .bs-checkbox-label {
+      font-size: 12px;
+      line-height: 1.5;
+      color: #fff;
+      cursor: pointer;
+    }
+    .bs-checkout-btn {
+      width: 100%;
+      background: #D4AF37;
+      color: #0B132B;
+      border: none;
+      padding: 15px;
+      border-radius: 4px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 25px;
+      text-transform: uppercase;
+    }
+    .bs-checkout-btn:disabled {
+      background: #555;
+      color: #888;
+      cursor: not-allowed;
+    }
+    .error-message {
+        color: #ff4d4d;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+    }
+    .bs-time-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .bs-time-slot {
+      background: #0B132B;
+      color: #fff;
+      border: 1px solid #A0A5B5;
+      padding: 10px 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 13px;
+      transition: 0.2s;
+    }
+    .bs-time-slot.selected {
+      background: #D4AF37;
+      color: #0B132B;
+      border-color: #D4AF37;
+      font-weight: bold;
+    }
+    .bs-time-slot:hover:not(.selected) {
+      border-color: #D4AF37;
+    }
+    #confirmation-screen {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+      background: #1A2442;
+      border-radius: 8px;
+      border: 2px solid #D4AF37;
+    }
+    #confirmation-screen h3 {
+      color: #D4AF37;
+      font-size: 26px;
+      text-transform: uppercase;
+      margin-top: 0;
+    }
+    #confirmation-screen p {
+      color: #A0A5B5;
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 15px auto;
+    }
+    .conf-details {
+      background: #0B132B;
+      padding: 20px;
+      border-radius: 6px;
+      max-width: 500px;
+      margin: 25px auto;
+      text-align: left;
+      border: 1px solid #A0A5B5;
+    }
+    .conf-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+    .conf-line span:first-child {
+      color: #D4AF37;
+      font-weight: bold;
+    }
+
+    /* Modal Lightbox Styles */
+    #bs-image-modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
       box-sizing: border-box;
     }
+    #bs-image-modal img {
+      max-width: 90%;
+      max-height: 85vh;
+      border-radius: 6px;
+      object-fit: contain;
+      border: 2px solid #D4AF37;
+      background-color: #fff;
+    }
+    #bs-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #fff;
+      font-size: 35px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #bs-modal-close:hover {
+      color: #D4AF37;
+    }
+    .bs-logo {
+      display: block;
+      margin: 0 auto 20px auto;
+      width: 50%;
+      height: auto;
+      border-radius: 6px;
+    }
+
   </style>
 </head>
 <body>
+  <div id="boat-stock-widget">
+    
+    <!-- Insert your logo here -->
+    <img src="images/BoatStockLogo.JPG" class="bs-logo" alt="Craft Clean Services">
 
-  <header>
-    <h1>BoatStock Provisioning</h1>
-    <p>Craft Clean Services - Port St. Joe & Mexico Beach</p>
-  </header>
+  <div id="boat-stock-widget">
+    <h2>Boat Stock</h2>
+    <p class="subtitle">Zero grocery runs. Zero hassle. 100% on-the-water time.</p>
 
-  <div class="container">
-    <h2>Catalog</h2>
-    <div id="store-grid" class="store-grid">
-      <p>Loading inventory...</p>
-    </div>
+    <div id="order-form-container">
+      <div class="bs-section">
+        <h3 style="color: #D4AF37; margin-top: 0; border-bottom: 1px solid #A0A5B5; padding-bottom: 10px;">Client Information</h3>
+        <div class="bs-form-row">
+            <div class="bs-form-group">
+              <label>Name</label>
+              <input type="text" id="bs-client" placeholder="First and Last Name">
+            </div>
+            <div class="bs-form-group">
+              <label>Telephone</label>
+              <input type="tel" id="bs-phone" placeholder="(123) 456-7890">
+            </div>
+        </div>
+        
+        <div class="bs-form-group">
+          <label>Boat Make, Model & Length</label>
+          <input type="text" id="bs-boat" placeholder="e.g. 32' Cape Horn Center Console">
+        </div>
 
-    <div id="cart-section">
-      <h2>Checkout & Delivery Details</h2>
-      <form id="checkout-form">
-        <div class="form-group">
-          <label>Client Name</label>
-          <input type="text" id="client" required placeholder="John Smith">
+        <h3 style="color: #D4AF37; margin-top: 25px; border-bottom: 1px solid #A0A5B5; padding-bottom: 10px;">Delivery Location & Stowage</h3>
+        
+        <div class="bs-form-group">
+          <label>Address Where Boat is Stored</label>
+          <input type="text" id="bs-address" placeholder="Marina or Residential Address">
         </div>
-        <div class="form-group">
-          <label>Phone Number</label>
-          <input type="text" id="phone" required placeholder="850-555-1234">
+
+        <div class="bs-form-row">
+            <div class="bs-form-group">
+              <label>Slip Number (If applicable)</label>
+              <input type="text" id="bs-slip" placeholder="e.g. B-14">
+            </div>
+            <div class="bs-form-group">
+              <label>Gate / Lift / Access Code (If applicable)</label>
+              <input type="text" id="bs-code" placeholder="e.g. 1234#">
+            </div>
         </div>
-        <div class="form-group">
-          <label>Boat Name / Make</label>
-          <input type="text" id="boat" required placeholder="32 Cape Horn">
+
+        <div class="bs-form-group">
+          <label>Stowage Instructions</label>
+          <textarea id="bs-stowage" rows="3" placeholder="Please be as descriptive as possible. Where in the boat do you want items stored? (e.g., 'Put ice and drinks in the transom fish box, snacks in the console cabin')..."></textarea>
         </div>
-        <div class="form-group">
+
+        <h3 style="color: #D4AF37; margin-top: 25px; border-bottom: 1px solid #A0A5B5; padding-bottom: 10px;">Delivery Scheduling</h3>
+        <p style="font-size: 12px; color: #A0A5B5; margin-bottom: 15px;">Deliveries available Mon–Fri (8:30 AM – 2:00 PM EST). Must be booked at least 3 business days in advance.</p>
+        
+        <div class="bs-form-group" style="max-width: 300px;">
           <label>Delivery Date</label>
-          <input type="date" id="deliveryDate" required>
+          <input type="date" id="bs-date">
+          <div id="date-error" class="error-message">Orders require at least 3 business days notice (Mon–Fri only).</div>
         </div>
-        <div class="form-group">
-          <label>Delivery Time</label>
-          <input type="text" id="deliveryTime" required placeholder="9:30 AM">
+        
+        <div class="bs-form-group">
+          <label>Delivery Time Slot</label>
+          <div class="bs-time-grid" id="bs-time-grid">
+            <div class="bs-time-slot" data-time="8:30 AM">8:30 AM</div>
+            <div class="bs-time-slot" data-time="9:00 AM">9:00 AM</div>
+            <div class="bs-time-slot" data-time="9:30 AM">9:30 AM</div>
+            <div class="bs-time-slot" data-time="10:00 AM">10:00 AM</div>
+            <div class="bs-time-slot" data-time="10:30 AM">10:30 AM</div>
+            <div class="bs-time-slot" data-time="11:00 AM">11:00 AM</div>
+            <div class="bs-time-slot" data-time="11:30 AM">11:30 AM</div>
+            <div class="bs-time-slot" data-time="12:00 PM">12:00 PM</div>
+            <div class="bs-time-slot" data-time="12:30 PM">12:30 PM</div>
+            <div class="bs-time-slot" data-time="1:00 PM">1:00 PM</div>
+            <div class="bs-time-slot" data-time="1:30 PM">1:30 PM</div>
+            <div class="bs-time-slot" data-time="2:00 PM">2:00 PM</div>
+          </div>
+          <input type="hidden" id="bs-selected-time" value="">
         </div>
-        <div class="form-group">
-          <label>Marina / Address</label>
-          <input type="text" id="address" required placeholder="Point South Marina">
-        </div>
-        <div class="form-group">
-          <label>Slip Number</label>
-          <input type="text" id="slip" placeholder="Slip 212">
-        </div>
-        <div class="form-group">
-          <label>Access Code / Gate Code</label>
-          <input type="text" id="accessCode" placeholder="1234">
-        </div>
-        <div class="form-group">
-          <label>Stowage Notes</label>
-          <textarea id="stowageNotes" placeholder="All in the cooler at the front"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Special Requests</label>
-          <textarea id="specialRequests" placeholder="None"></textarea>
+      </div>
+
+      <div class="bs-tabs" id="bs-tabs-container"></div>
+      <div class="bs-grid" id="bs-product-grid">Loading Inventory...</div>
+
+      <div class="bs-section" style="margin-top: 30px; border-top: 4px solid #D4AF37;">
+        <h3 style="color: #D4AF37; margin-top: 0;">Your Provisioning Order</h3>
+        <div id="bs-cart-items">Your cooler is currently empty.</div>
+        
+        <div class="bs-form-group" style="margin-top: 20px;">
+          <label>Special Requests / Unlisted Items</label>
+          <textarea id="bs-special-requests" rows="3" placeholder="Need something else? Type the item and quantity here (e.g. '1 pack of size 2/0 circle hooks' or '2 cans of Pringles')..."></textarea>
         </div>
 
-        <h3>Order Summary</h3>
-        <div id="cart-items-summary">Cart is empty.</div>
-        <p><strong>Grand Total: $<span id="grand-total">0.00</span></strong></p>
+        <div class="bs-totals">
+          <div class="bs-total-line"><span>Estimated Cost of Goods:</span> <span id="bs-subtotal">$0.00</span></div>
+          <div class="bs-total-line"><span>Base Delivery & Concierge Fee:</span> <span>$120.00</span></div>
+          <div class="bs-total-line"><span>10% Grocery Concierge Fee:</span> <span id="bs-markup">$0.00</span></div>
+          <div class="bs-total-line bs-grand-total"><span>Estimated Grand Total:</span> <span id="bs-grand">$120.00</span></div>
+          <div class="bs-total-line bs-deposit-line"><span>Today's Required Deposit:</span> <span>$200.00</span></div>
+        </div>
 
-        <button type="submit" id="bs-checkout-btn">Submit Order & Proceed to Checkout</button>
-      </form>
+        <label class="bs-checkbox-container">
+          <input type="checkbox" id="bs-liability-check">
+          <span class="bs-checkbox-label">
+            <strong>Vessel Access Authorization & Liability Release:</strong> I hereby authorize Craft Clean Services, LLC and its designated agents to access my vessel for the sole purpose of delivering, storing, and organizing the requested provisioning goods. I assume all risks associated with this access and release Craft Clean Services, LLC and its agents from any and all liability, claims, or damages arising from the delivery and setup process.
+          </span>
+        </label>
+
+        <label class="bs-checkbox-container" style="border-color: #D4AF37;">
+          <input type="checkbox" id="bs-cancellation-check">
+          <span class="bs-checkbox-label">
+            <strong>Billing & Cancellation Policy:</strong> The service costs the cost of goods + a base delivery and concierge fee of $120 + a delivery and concierge fee of 10% of the cost of goods. A deposit of $200 will be charged at the time the order is placed. Once the shopping has been completed and a total cost of goods has been calculated, a second charge will be incurred to account for the remaining balance (if any). If a credit remains, a refund for the amount will be issued. All cancellations are subject to a total forfeiture of the cost of goods. Cancellations with less than 24 hours remaining to delivery time will receive no refunds of costs of goods or delivery and concierge fees.
+          </span>
+        </label>
+        
+        <button class="bs-checkout-btn" id="bs-checkout-btn" disabled>Proceed to Secure Checkout</button>
+        <p style="font-size: 11px; color: #A0A5B5; text-align: center; margin-top: 15px;">
+          *You will be redirected to Stripe to pay the $200.00 deposit and securely vault your card for the final balance/refund after delivery.
+        </p>
+      </div>
     </div>
+
+    <div id="confirmation-screen">
+      <h3>Delivery Slot Secured!</h3>
+      <p>Thank you, <span id="conf-name" style="color:#D4AF37; font-weight:bold;"></span>. Your provisioning order has been successfully transmitted to Craft Clean Services.</p>
+      
+      <div class="conf-details">
+        <div class="conf-line"><span>Vessel:</span> <span id="conf-boat"></span></div>
+        <div class="conf-line"><span>Delivery Date:</span> <span id="conf-date"></span></div>
+        <div class="conf-line"><span>Time Window:</span> <span id="conf-time"></span></div>
+        <div class="conf-line"><span>Order Status:</span> <span id="conf-total" style="color:#D4AF37;">Deposit Authorized</span></div>
+      </div>
+
+      <p style="font-size: 14px; color: #fff;">An order summary sheet has been generated in our management system, and our concierge team has been notified.</p>
+    </div>
+
+  </div>
+
+  <!-- Image Lightbox Modal -->
+  <div id="bs-image-modal">
+    <span id="bs-modal-close">&times;</span>
+    <img id="bs-modal-img" src="" alt="Enlarged Product View">
   </div>
 
   <script>
-    const scriptUrl = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
-
-    let products = [];
-    let cart = {};
-
-    function initStore() {
-      products = [
-        { id: "1", name: "10 lb Bag of Ice", price: 2.33, img: "BoatStockLogo.JPG" },
-        { id: "2", name: "Sunscreen SPF 50", price: 12.50, img: "BoatStockLogo.JPG" },
-        { id: "3", name: "Bug Spray", price: 8.99, img: "BoatStockLogo.JPG" },
-        { id: "4", name: "Coke - 12 pack", price: 8.42, img: "BoatStockLogo.JPG" },
-        { id: "5", name: "Canada Dry Ginger Ale - 12 pack", price: 7.97, img: "BoatStockLogo.JPG" }
-      ];
-      renderStore();
-    }
-
-    function renderStore() {
-      const grid = document.getElementById('store-grid');
-      grid.innerHTML = products.map(p => `
-        <div class="product-card">
-          <img src="${p.img}" alt="${p.name}">
-          <div>
-            <h4>${p.name}</h4>
-            <p>$${p.price.toFixed(2)}</p>
-          </div>
-          <button onclick="addToCart('${p.id}')">Add to Cart</button>
-        </div>
-      `).join('');
-    }
-
-    function addToCart(id) {
-      cart[id] = (cart[id] || 0) + 1;
-      updateCartSummary();
-    }
-
-    function updateCartSummary() {
-      const summaryDiv = document.getElementById('cart-items-summary');
-      let total = 0;
-      let html = '<ul>';
+    (function() {
+      let products = [];
+      let cart = {};
+      let activeCategory = "All";
       
-      for (const [id, qty] of Object.entries(cart)) {
-        const prod = products.find(p => p.id === id);
-        if (prod) {
-          const lineTotal = prod.price * qty;
-          total += lineTotal;
-          html += `<li>${prod.name} x ${qty} - $${lineTotal.toFixed(2)}</li>`;
+      const tabsContainer = document.getElementById('bs-tabs-container');
+      const gridContainer = document.getElementById('bs-product-grid');
+      const cartContainer = document.getElementById('bs-cart-items');
+      
+      // Modal elements
+      const modal = document.getElementById('bs-image-modal');
+      const modalImg = document.getElementById('bs-modal-img');
+      const modalClose = document.getElementById('bs-modal-close');
+
+      modalClose.addEventListener('click', () => { modal.style.display = 'none'; });
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('success') === 'true') {
+        document.getElementById('order-form-container').style.display = 'none';
+        document.getElementById('conf-name').innerText = urlParams.get('client') || "Valued Client";
+        document.getElementById('conf-boat').innerText = "Verified Vessel";
+        document.getElementById('conf-date').innerText = "Scheduled";
+        document.getElementById('conf-time').innerText = "Confirmed Window";
+        document.getElementById('confirmation-screen').style.display = 'block';
+        return;
+      }
+      
+      async function fetchInventory() {
+        try {
+          const csvUrl = "https://docs.google.com/spreadsheets/d/18uETd1djlMwtcbywHUTzW3XT5p73E0dkquqZ1zRqaY8/export?format=csv";
+          const response = await fetch(csvUrl);
+          const data = await response.text();
+          
+          const lines = data.split('\n');
+          for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+            
+            const cols = [];
+            let current = '';
+            let inQuotes = false;
+            for (let j = 0; j < line.length; j++) {
+              const char = line[j];
+              if (char === '"') {
+                inQuotes = !inQuotes;
+              } else if (char === ',' && !inQuotes) {
+                cols.push(current.trim());
+                current = '';
+              } else {
+                current += char;
+              }
+            }
+            cols.push(current.trim());
+            
+            if (cols.length >= 6) {
+              products.push({
+                id: cols[0].replace(/^["']|["']$/g, ''),
+                cat: cols[1].replace(/^["']|["']$/g, ''),
+                name: cols[2].replace(/^["']|["']$/g, ''),
+                price: parseFloat(cols[3].replace(/^["']|["']$/g, '')) || 0,
+                img: cols[5].replace(/^["']|["']$/g, '')
+              });
+            }
+          }
+          initStore();
+        } catch (err) {
+          gridContainer.innerHTML = '<p style="color:#ff4d4d; text-align:center;">Error loading inventory. Please refresh.</p>';
         }
       }
-      html += '</ul>';
-      summaryDiv.innerHTML = html;
-      
-      const deliveryBase = 120.00;
-      const markup = total * 0.10;
-      const grandTotal = total + deliveryBase + markup;
-      document.getElementById('grand-total').textContent = grandTotal.toFixed(2);
-    }
 
-    document.getElementById('checkout-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const btn = document.getElementById('bs-checkout-btn');
-      btn.textContent = "Processing Order...";
-      btn.disabled = true;
+      function initStore() {
+        const dateInput = document.getElementById('bs-date');
+        const dateError = document.getElementById('date-error');
+        const liabilityCheck = document.getElementById('bs-liability-check');
+        const cancellationCheck = document.getElementById('bs-cancellation-check');
+        const checkoutBtn = document.getElementById('bs-checkout-btn');
+        
+        const timeSlots = document.querySelectorAll('.bs-time-slot');
+        const selectedTimeInput = document.getElementById('bs-selected-time');
 
-      let itemsArray = [];
-      let subtotal = 0;
-      for (const [id, qty] of Object.entries(cart)) {
-        const prod = products.find(p => p.id === id);
-        if (prod) {
-          const lineTotal = prod.price * qty;
-          subtotal += lineTotal;
-          itemsArray.push({
-            name: prod.name,
-            qty: qty,
-            lineTotal: lineTotal
+        const minDate = new Date();
+        minDate.setDate(minDate.getDate() + 3);
+        dateInput.min = minDate.toISOString().split('T')[0];
+
+        timeSlots.forEach(slot => {
+          slot.addEventListener('click', function() {
+            timeSlots.forEach(s => s.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedTimeInput.value = this.getAttribute('data-time');
           });
-        }
-      }
-
-      const orderData = {
-        client: document.getElementById('client').value,
-        phone: document.getElementById('phone').value,
-        boat: document.getElementById('boat').value,
-        deliveryDate: document.getElementById('deliveryDate').value,
-        deliveryTime: document.getElementById('deliveryTime').value,
-        address: document.getElementById('address').value,
-        slip: document.getElementById('slip').value,
-        accessCode: document.getElementById('accessCode').value,
-        stowageNotes: document.getElementById('stowageNotes').value,
-        specialRequests: document.getElementById('specialRequests').value,
-        grocerySubtotal: subtotal,
-        deliveryBase: 120.00,
-        groceryMarkup: subtotal * 0.10,
-        grandTotal: subtotal + 120.00 + (subtotal * 0.10),
-        items: itemsArray
-      };
-
-      try {
-        await fetch(scriptUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(orderData)
         });
 
-        alert("Order logged successfully! Redirecting to payment...");
-        window.location.href = "https://buy.stripe.com/your_stripe_payment_link_here";
+        function validateCheckboxes() {
+            checkoutBtn.disabled = !(liabilityCheck.checked && cancellationCheck.checked);
+        }
 
-      } catch (err) {
-        console.error("Order submission error:", err);
-        alert("There was an issue submitting your order. Please try again.");
-        btn.textContent = "Submit Order & Proceed to Checkout";
-        btn.disabled = false;
+        liabilityCheck.addEventListener('change', validateCheckboxes);
+        cancellationCheck.addEventListener('change', validateCheckboxes);
+
+        dateInput.addEventListener('input', function() {
+          if (!this.value) return;
+          const selectedDate = new Date(this.value);
+          const day = selectedDate.getUTCDay();
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          const diffTime = selectedDate - today;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+          if ([0, 6].includes(day) || diffDays < 3) {
+            dateError.style.display = 'block';
+            this.style.borderColor = '#ff4d4d';
+            this.dataset.valid = 'false';
+          } else {
+            dateError.style.display = 'none';
+            this.style.borderColor = '#A0A5B5';
+            this.dataset.valid = 'true';
+          }
+        });
+
+        const categories = ["All", ...new Set(products.map(p => p.cat))];
+        tabsContainer.innerHTML = '';
+        categories.forEach(cat => {
+          const btn = document.createElement('button');
+          btn.className = `bs-tab ${cat === 'All' ? 'active' : ''}`;
+          btn.innerText = cat;
+          btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.bs-tab').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            activeCategory = cat;
+            renderProducts();
+          });
+          tabsContainer.appendChild(btn);
+        });
+        renderProducts();
       }
-    });
 
-    initStore();
+      function renderProducts() {
+        gridContainer.innerHTML = '';
+        const filtered = activeCategory === "All" ? products : products.filter(p => p.cat === activeCategory);
+        filtered.forEach(p => {
+          const qty = cart[p.id] || 0;
+          const card = document.createElement('div');
+          card.className = 'bs-card';
+          card.innerHTML = `
+            <div>
+              <img src="${p.img}" class="bs-img product-thumbnail" alt="${p.name}" loading="lazy" title="Click to enlarge" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'><rect width=\'100%\' height=\'100%\' fill=\'%23ddd\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23888\' font-size=\'12\'>No Image</text></svg>'">
+              <h4>${p.name}</h4>
+              <div class="bs-price">$${p.price.toFixed(2)}</div>
+            </div>
+            <div class="bs-card-actions">
+              <button class="bs-btn bs-add-btn" data-id="${p.id}" style="display: ${qty > 0 ? 'none' : 'block'}">Add to Cooler</button>
+              <div class="bs-qty-inline ${qty > 0 ? 'active' : ''}" id="inline-qty-${p.id}">
+                <button class="bs-inline-btn bs-inline-minus" data-id="${p.id}">-</button>
+                <span class="bs-inline-count" id="count-${p.id}">${qty}</span>
+                <button class="bs-inline-btn bs-inline-plus" data-id="${p.id}">+</button>
+              </div>
+            </div>
+          `;
+          gridContainer.appendChild(card);
+        });
+
+        attachCardListeners();
+      }
+
+      function attachCardListeners() {
+        // Image click to open modal
+        document.querySelectorAll('.product-thumbnail').forEach(img => {
+          img.addEventListener('click', (e) => {
+            modalImg.src = e.target.src;
+            modal.style.display = 'flex';
+          });
+        });
+
+        document.querySelectorAll('.bs-add-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const id = e.target.getAttribute('data-id');
+            cart[id] = 1;
+            renderProducts(); 
+            updateCart();
+          });
+        });
+
+        document.querySelectorAll('.bs-inline-minus').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const id = e.target.getAttribute('data-id');
+            cart[id]--;
+            if (cart[id] <= 0) delete cart[id];
+            renderProducts(); 
+            updateCart();
+          });
+        });
+
+        document.querySelectorAll('.bs-inline-plus').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const id = e.target.getAttribute('data-id');
+            cart[id]++;
+            document.getElementById('count-'+id).innerText = cart[id];
+            updateCart();
+          });
+        });
+      }
+
+      function updateCart() {
+        if (Object.keys(cart).length === 0) {
+          cartContainer.innerHTML = 'Your cooler is currently empty.';
+          updateTotals(0);
+          return;
+        }
+        
+        cartContainer.innerHTML = '';
+        let subtotal = 0;
+        
+        Object.keys(cart).forEach(id => {
+          const p = products.find(prod => prod.id == id);
+          const lineTotal = p.price * cart[id];
+          subtotal += lineTotal;
+          
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'bs-cart-item';
+          itemDiv.innerHTML = `
+            <span style="flex-grow:1; color:#fff;">${p.name} (x${cart[id]})</span>
+            <span style="color:#D4AF37;">$${lineTotal.toFixed(2)}</span>
+          `;
+          cartContainer.appendChild(itemDiv);
+        });
+
+        updateTotals(subtotal);
+      }
+
+      function updateTotals(subtotal) {
+        const markup = subtotal * 0.10;
+        const grandTotal = subtotal + markup + 120.00;
+        document.getElementById('bs-subtotal').innerText = `$${subtotal.toFixed(2)}`;
+        document.getElementById('bs-markup').innerText = `$${markup.toFixed(2)}`;
+        document.getElementById('bs-grand').innerText = `$${grandTotal.toFixed(2)}`;
+      }
+
+      document.getElementById('bs-checkout-btn').addEventListener('click', async () => {
+        const client = document.getElementById('bs-client').value.trim();
+        const phone = document.getElementById('bs-phone').value.trim();
+        const boat = document.getElementById('bs-boat').value.trim();
+        const address = document.getElementById('bs-address').value.trim();
+        const slip = document.getElementById('bs-slip').value.trim() || "N/A";
+        const code = document.getElementById('bs-code').value.trim() || "N/A";
+        const stowage = document.getElementById('bs-stowage').value.trim() || "None";
+        const dateInput = document.getElementById('bs-date');
+        const selectedTime = document.getElementById('bs-selected-time').value;
+        const specialRequests = document.getElementById('bs-special-requests').value.trim() || "None";
+        const btn = document.getElementById('bs-checkout-btn');
+        
+        if (!client || !phone || !boat || !address || !dateInput.value) {
+          alert("Please ensure Name, Telephone, Boat Details, Address, and Date are filled out!");
+          return;
+        }
+
+        const selectedDate = new Date(dateInput.value);
+        const day = selectedDate.getUTCDay();
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const diffTime = selectedDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if ([0, 6].includes(day) || diffDays < 3) {
+          alert("Please select a valid delivery date at least 3 business days in advance (Mon–Fri only).");
+          return;
+        }
+
+        if (!selectedTime) {
+          alert("Please select a delivery time slot.");
+          return;
+        }
+        
+        if (Object.keys(cart).length === 0) {
+          alert("Please add items to your cooler first.");
+          return;
+        }
+
+        let cartData = [];
+        let subtotal = 0;
+        Object.keys(cart).forEach(id => {
+          const p = products.find(prod => prod.id == id);
+          const lineTotal = p.price * cart[id];
+          subtotal += lineTotal;
+          cartData.push({ qty: cart[id], name: p.name, total: lineTotal.toFixed(2) });
+        });
+
+        const markup = subtotal * 0.10;
+        const grandTotal = subtotal + markup + 120.00;
+
+        const orderPayload = {
+          client: client, phone: phone, boat: boat, address: address,
+          slip: slip, code: code, stowage: stowage, date: dateInput.value,
+          time: selectedTime, special: specialRequests,
+          cart: cartData, subtotal: subtotal.toFixed(2),
+          markup: markup.toFixed(2), grandTotal: grandTotal.toFixed(2)
+        };
+
+        btn.innerText = "SECURING ORDER...";
+        btn.disabled = true;
+
+        try {
+          const scriptUrl = "https://script.google.com/macros/s/AKfycbw6-Y1pynne3FXFof4Fv8ch6q8aI885TPAY0pnW5n4OxnjnZygZ5YUx3uwd5qo0GcmF3A/exec";
+          
+          await fetch(scriptUrl, {
+            method: "POST",
+            mode: "no-cors", 
+            body: JSON.stringify(orderPayload)
+          });
+          
+          window.location.href = "https://buy.stripe.com/test_9B600i8508Nz0VP72adby02";
+
+        } catch (err) {
+          alert("Network error. Please try again.");
+          btn.innerText = "Proceed to Secure Checkout";
+          btn.disabled = false;
+        }
+      });
+
+      fetchInventory();
+    })();
   </script>
+
 </body>
 </html>
