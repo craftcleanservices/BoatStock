@@ -120,10 +120,15 @@
     .bs-img {
       width: 100%;
       height: 140px;
-      object-fit: cover;
+      object-fit: contain; /* Prevents image cutting off */
       border-radius: 4px;
       margin-bottom: 15px;
-      background-color: #f0f0f0;
+      background-color: #f8f9fa;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .bs-img:hover {
+      transform: scale(1.03);
     }
     .bs-card h4 {
       margin: 0 0 5px 0;
@@ -332,6 +337,42 @@
       color: #D4AF37;
       font-weight: bold;
     }
+
+    /* Modal Lightbox Styles */
+    #bs-image-modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #bs-image-modal img {
+      max-width: 90%;
+      max-height: 85vh;
+      border-radius: 6px;
+      object-fit: contain;
+      border: 2px solid #D4AF37;
+      background-color: #fff;
+    }
+    #bs-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #fff;
+      font-size: 35px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #bs-modal-close:hover {
+      color: #D4AF37;
+    }
   </style>
 </head>
 <body>
@@ -468,6 +509,12 @@
 
   </div>
 
+  <!-- Image Lightbox Modal -->
+  <div id="bs-image-modal">
+    <span id="bs-modal-close">&times;</span>
+    <img id="bs-modal-img" src="" alt="Enlarged Product View">
+  </div>
+
   <script>
     (function() {
       let products = [];
@@ -477,6 +524,14 @@
       const tabsContainer = document.getElementById('bs-tabs-container');
       const gridContainer = document.getElementById('bs-product-grid');
       const cartContainer = document.getElementById('bs-cart-items');
+      
+      // Modal elements
+      const modal = document.getElementById('bs-image-modal');
+      const modalImg = document.getElementById('bs-modal-img');
+      const modalClose = document.getElementById('bs-modal-close');
+
+      modalClose.addEventListener('click', () => { modal.style.display = 'none'; });
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
 
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('success') === 'true') {
@@ -500,7 +555,6 @@
             const line = lines[i].trim();
             if (!line) continue;
             
-            // Safe CSV column parser handling potential commas inside quotes
             const cols = [];
             let current = '';
             let inQuotes = false;
@@ -523,7 +577,7 @@
                 cat: cols[1].replace(/^["']|["']$/g, ''),
                 name: cols[2].replace(/^["']|["']$/g, ''),
                 price: parseFloat(cols[3].replace(/^["']|["']$/g, '')) || 0,
-                img: cols[5].replace(/^["']|["']$/g, '') // Mapped to column F (ImageURL)
+                img: cols[5].replace(/^["']|["']$/g, '')
               });
             }
           }
@@ -608,7 +662,7 @@
           card.className = 'bs-card';
           card.innerHTML = `
             <div>
-              <img src="${p.img}" class="bs-img" alt="${p.name}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'><rect width=\'100%\' height=\'100%\' fill=\'%23ddd\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23888\' font-size=\'12\'>No Image</text></svg>'">
+              <img src="${p.img}" class="bs-img product-thumbnail" alt="${p.name}" loading="lazy" title="Click to enlarge" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'><rect width=\'100%\' height=\'100%\' fill=\'%23ddd\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23888\' font-size=\'12\'>No Image</text></svg>'">
               <h4>${p.name}</h4>
               <div class="bs-price">$${p.price.toFixed(2)}</div>
             </div>
@@ -628,6 +682,14 @@
       }
 
       function attachCardListeners() {
+        // Image click to open modal
+        document.querySelectorAll('.product-thumbnail').forEach(img => {
+          img.addEventListener('click', (e) => {
+            modalImg.src = e.target.src;
+            modal.style.display = 'flex';
+          });
+        });
+
         document.querySelectorAll('.bs-add-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const id = e.target.getAttribute('data-id');
