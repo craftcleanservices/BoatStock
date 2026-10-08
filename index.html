@@ -96,7 +96,7 @@
   <div class="container">
     <h2>Catalog</h2>
     <div id="store-grid" class="store-grid">
-      <!-- Dynamically loaded inventory items -->
+      <p>Loading inventory...</p>
     </div>
 
     <div id="cart-section">
@@ -153,24 +153,19 @@
   </div>
 
   <script>
-    // Replace with your active Google Apps Script Web App URL
     const scriptUrl = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
 
     let products = [];
     let cart = {};
 
-    // Simple mock load function (replace or integrate with your existing CSV fetch code)
     function initStore() {
-      const grid = document.getElementById('store-grid');
-      grid.innerHTML = '<p>Loading inventory...</p>';
-      
-      // Fetch your CSV catalog here or keep your existing fetchInventory logic
-      // Example item for structure:
       products = [
-        { id: "1", cat: "Ice", name: "10 lb Bag of Ice", price: 2.33, img: "BoatStockLogo.JPG" },
-        { id: "2", cat: "Drinks", name: "Coke - 12 pack", price: 8.42, img: "BoatStockLogo.JPG" }
+        { id: "1", name: "10 lb Bag of Ice", price: 2.33, img: "BoatStockLogo.JPG" },
+        { id: "2", name: "Sunscreen SPF 50", price: 12.50, img: "BoatStockLogo.JPG" },
+        { id: "3", name: "Bug Spray", price: 8.99, img: "BoatStockLogo.JPG" },
+        { id: "4", name: "Coke - 12 pack", price: 8.42, img: "BoatStockLogo.JPG" },
+        { id: "5", name: "Canada Dry Ginger Ale - 12 pack", price: 7.97, img: "BoatStockLogo.JPG" }
       ];
-
       renderStore();
     }
 
@@ -222,7 +217,6 @@
       btn.textContent = "Processing Order...";
       btn.disabled = true;
 
-      // Build items array for Apps Script doPost
       let itemsArray = [];
       let subtotal = 0;
       for (const [id, qty] of Object.entries(cart)) {
@@ -257,7 +251,6 @@
       };
 
       try {
-        // Send data to Google Apps Script Web App
         await fetch(scriptUrl, {
           method: 'POST',
           mode: 'no-cors',
@@ -265,7 +258,6 @@
           body: JSON.stringify(orderData)
         });
 
-        // Redirect to Stripe or payment link after successful logging
         alert("Order logged successfully! Redirecting to payment...");
         window.location.href = "https://buy.stripe.com/your_stripe_payment_link_here";
 
@@ -277,7 +269,6 @@
       }
     });
 
-    // Initialize store on load
     initStore();
   </script>
 </body>
