@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,6 +21,13 @@
       width: 100%;
       max-width: 1000px;
       box-sizing: border-box;
+    }
+    .bs-logo {
+      display: block;
+      margin: 0 auto 20px auto;
+      width: 50%;
+      height: auto;
+      border-radius: 6px;
     }
     #boat-stock-widget h2 {
       color: #D4AF37;
@@ -122,7 +127,7 @@
     .bs-img {
       width: 100%;
       height: 140px;
-      object-fit: contain; /* Prevents image cutting off */
+      object-fit: contain;
       border-radius: 4px;
       margin-bottom: 15px;
       background-color: #f8f9fa;
@@ -375,23 +380,15 @@
     #bs-modal-close:hover {
       color: #D4AF37;
     }
-    .bs-logo {
-      display: block;
-      margin: 0 auto 20px auto;
-      width: 50%;
-      height: auto;
-      border-radius: 6px;
-    }
-
   </style>
 </head>
 <body>
-  <div id="boat-stock-widget">
-    
-    <!-- Insert your logo here -->
-    <img src="images/BoatStockLogo.JPG" class="bs-logo" alt="Craft Clean Services">
 
   <div id="boat-stock-widget">
+    
+    <!-- Top Centered Logo -->
+    <img src="images/BoatStockLogo.JPG" class="bs-logo" alt="Craft Clean Services" onerror="this.src='BoatStockLogo.JPG'">
+
     <h2>Boat Stock</h2>
     <p class="subtitle">Zero grocery runs. Zero hassle. 100% on-the-water time.</p>
 
@@ -595,31 +592,17 @@
               });
             }
           }
+          
+          // Sort items alphabetically by name
+          products.sort((a, b) => a.name.localeCompare(b.name));
+
           initStore();
         } catch (err) {
           gridContainer.innerHTML = '<p style="color:#ff4d4d; text-align:center;">Error loading inventory. Please refresh.</p>';
         }
       }
 
-      function initStore() 
-        if (cols.length >= 6) {
-          products.push({
-            id: cols[0].replace(/^["']|["']$/g, ''),
-            cat: cols[1].replace(/^["']|["']$/g, ''),
-            name: cols[2].replace(/^["']|["']$/g, ''),
-            price: parseFloat(cols[3].replace(/^["']|["']$/g, '')) || 0,
-            img: cols[5].replace(/^["']|["']$/g, '')
-          });
-        }
-      }
-      
-      // Add this line to sort alphabetically by product name
-      products.sort((a, b) => a.name.localeCompare(b.name));
-
-      initStore();
-    } catch (err) {
-
-{
+      function initStore() {
         const dateInput = document.getElementById('bs-date');
         const dateError = document.getElementById('date-error');
         const liabilityCheck = document.getElementById('bs-liability-check');
