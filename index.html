@@ -477,8 +477,9 @@
 
         <div class="bs-totals">
           <div class="bs-total-line"><span>Estimated Cost of Goods:</span> <span id="bs-subtotal">$0.00</span></div>
-          <div class="bs-total-line"><span>Base Delivery & Concierge Fee:</span> <span>$120.00</span></div>
+          <div class="bs-total-line"><span>Estimated Sales Tax (7% on taxable items):</span> <span id="bs-tax">$0.00</span></div>
           <div class="bs-total-line"><span>10% Grocery Concierge Fee:</span> <span id="bs-markup">$0.00</span></div>
+          <div class="bs-total-line"><span>Base Delivery & Concierge Fee:</span> <span id="bs-delivery">$120.00</span></div>
           <div class="bs-total-line bs-grand-total"><span>Estimated Grand Total:</span> <span id="bs-grand">$120.00</span></div>
           <div class="bs-total-line bs-deposit-line"><span>Today's Required Deposit:</span> <span>$200.00</span></div>
         </div>
@@ -494,6 +495,13 @@
           <input type="checkbox" id="bs-cancellation-check">
           <span class="bs-checkbox-label">
             <strong>Billing & Cancellation Policy:</strong> The service costs the cost of goods + a base delivery and concierge fee of $120 + a delivery and concierge fee of 10% of the cost of goods. A deposit of $200 will be charged at the time the order is placed. Once the shopping has been completed and a total cost of goods has been calculated, a second charge will be incurred to account for the remaining balance (if any). If a credit remains, a refund for the amount will be issued. All cancellations are subject to a total forfeiture of the cost of goods. Cancellations with less than 24 hours remaining to delivery time will receive no refunds of costs of goods or delivery and concierge fees.
+          </span>
+        </label>
+        
+        <label class="bs-checkbox-container" style="border-color: #D4AF37;">
+          <input type="checkbox" id="bs-auth-checkbox" name="auth_consent" required>
+          <span class="bs-checkbox-label">
+            <strong>Authorization & Substitution Policy:</strong> I acknowledge that all listed cost of goods and sales tax amounts are estimated. I authorize Craft Clean Services to make necessary product substitutions to fulfill this provisioning order. I agree that the final order total will be adjusted and billed based on actual register receipts, applicable pass-through sales tax paid, and actual items delivered.
           </span>
         </label>
         
@@ -582,13 +590,15 @@
             }
             cols.push(current.trim());
             
-            if (cols.length >= 6) {
+            if (cols.length >= 7) {
+              const taxableVal = cols[4] ? cols[4].replace(/^["']|["']$/g, '').trim().toUpperCase() : '';
               products.push({
                 id: cols[0].replace(/^["']|["']$/g, ''),
                 cat: cols[1].replace(/^["']|["']$/g, ''),
                 name: cols[2].replace(/^["']|["']$/g, ''),
                 price: parseFloat(cols[3].replace(/^["']|["']$/g, '')) || 0,
-                img: cols[5].replace(/^["']|["']$/g, '')
+                taxable: taxableVal === 'YES' || taxableVal === 'TRUE',
+                img: cols[6].replace(/^["']|["']$/g, '')
               });
             }
           }
@@ -607,6 +617,7 @@
         const dateError = document.getElementById('date-error');
         const liabilityCheck = document.getElementById('bs-liability-check');
         const cancellationCheck = document.getElementById('bs-cancellation-check');
+        const authCheck = document.getElementById('bs-auth-checkbox');
         const checkoutBtn = document.getElementById('bs-checkout-btn');
         
         const timeSlots = document.querySelectorAll('.bs-time-slot');
@@ -625,11 +636,12 @@
         });
 
         function validateCheckboxes() {
-            checkoutBtn.disabled = !(liabilityCheck.checked && cancellationCheck.checked);
+            checkoutBtn.disabled = !(liabilityCheck.checked && cancellationCheck.checked && authCheck.checked);
         }
 
         liabilityCheck.addEventListener('change', validateCheckboxes);
         cancellationCheck.addEventListener('change', validateCheckboxes);
+        authCheck.addEventListener('change', validateCheckboxes);
 
         dateInput.addEventListener('input', function() {
           if (!this.value) return;
@@ -762,10 +774,24 @@
       }
 
       function updateTotals(subtotal) {
+        let taxableSubtotal = 0;
+        
+        Object.keys(cart).forEach(id => {
+          const p = products.find(prod => prod.id == id);
+          if (p && p.taxable) {
+            taxableSubtotal += p.price * cart[id];
+          }
+        });
+
+        const estimatedTax = taxableSubtotal * 0.07;
         const markup = subtotal * 0.10;
-        const grandTotal = subtotal + markup + 120.00;
+        const deliveryFee = 120.00;
+        const grandTotal = subtotal + markup + deliveryFee + estimatedTax;
+
         document.getElementById('bs-subtotal').innerText = `$${subtotal.toFixed(2)}`;
+        document.getElementById('bs-tax').innerText = `$${estimatedTax.toFixed(2)}`;
         document.getElementById('bs-markup').innerText = `$${markup.toFixed(2)}`;
+        document.getElementById('bs-delivery').innerText = `$${deliveryFee.toFixed(2)}`;
         document.getElementById('bs-grand').innerText = `$${grandTotal.toFixed(2)}`;
       }
 
@@ -811,15 +837,21 @@
 
         let cartData = [];
         let subtotal = 0;
+        let taxableSubtotal = 0;
+        
         Object.keys(cart).forEach(id => {
           const p = products.find(prod => prod.id == id);
           const lineTotal = p.price * cart[id];
           subtotal += lineTotal;
+          if (p.taxable) {
+            taxableSubtotal += lineTotal;
+          }
           cartData.push({ qty: cart[id], name: p.name, total: lineTotal.toFixed(2) });
         });
 
+        const estimatedTax = taxableSubtotal * 0.07;
         const markup = subtotal * 0.10;
-        const grandTotal = subtotal + markup + 120.00;
+        const grandTotal = subtotal + markup + 120.00 + estimatedTax;
 
         const orderPayload = {
           client: client, phone: phone, boat: boat, address: address,
